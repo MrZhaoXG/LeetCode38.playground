@@ -197,6 +197,36 @@ func multiply(_ num1: String, _ num2: String) -> String {
 
 //print(multiply("12323214321342134124122132131", "12332341213121324314123122321312"))//已经超出Int64 max 9223372036854775807
 
+import Foundation
+func match(_ s: String, _ pattern: String) -> Bool {
+    let _pattern = pattern as NSString
+    if s.count == 0 && pattern.count == 0 { return true }
+    else if s.count != 0 && pattern.count == 0 { return false }
+    else if s.count == 0 && pattern.count != 0 {
+        if pattern.count > 1 && _pattern.substring(with: NSRange(1...1)) == "*" {
+            return match(s, _pattern.substring(with: NSRange(2...)))
+        } else {
+            return false
+        }
+    } else {
+        if pattern.count > 1 && _pattern.substring(with: NSRange(1...1)) == "*" {
+            if s.first! != pattern.first! && _pattern.substring(with: NSRange(1...1)) != "." {
+                return match(s, _pattern.substring(with: NSRange(2...)))
+            } else {
+                return match(s, _pattern.substring(with: NSRange(2...))) ||
+                    match((s as NSString).substring(with: NSRange(1...)), _pattern.substring(with: NSRange(2...))) ||
+                        match((s as NSString).substring(with: NSRange(1...)), pattern)
+            }
+        } else {
+            if s.first! == pattern.first! || pattern.first! == "." {
+                return match(String(s.dropFirst()), String(pattern.dropFirst()))
+            } else {
+                return false
+            }
+        }
+    }
+}
+
 func isMatch(_ s: String, _ p: String) -> Bool {
     var patternIndex = 0
     var stringIndex = 0
